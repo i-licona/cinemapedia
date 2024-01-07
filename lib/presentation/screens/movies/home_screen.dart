@@ -1,8 +1,8 @@
 import 'package:cinemapedia/domain/entities/movie.dart';
-import 'package:cinemapedia/presentation/providers/movies/movies_providers.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/providers.dart';
 
 class HomeScreen extends StatelessWidget {
   static const name = 'home-screen';
@@ -12,6 +12,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: _HomeView(),
+      bottomNavigationBar: NavigationBottom(),
     );
   }
 }
@@ -37,13 +38,18 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   Widget build(BuildContext context) {
     // Esta al pendiente del provider
     final List<Movie> nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );
-
-    if (nowPlayingMovies.isEmpty) return const Center(child: CircularProgressIndicator());
+    final List<Movie> slideshowMovies = ref.watch( moviesSlideshowProvider );
 
     return Column(
       children: [
         const CustomAppbar(),
-        MoviesSlideshow(movies: nowPlayingMovies)
+        MoviesSlideshow(movies: slideshowMovies),
+        if( nowPlayingMovies.isNotEmpty )
+          MovieHorizontalListview(
+            movies: nowPlayingMovies,
+            title: 'En cines',
+            subtitle: 'Lunes 20',
+          )
       ],
     );
   }
